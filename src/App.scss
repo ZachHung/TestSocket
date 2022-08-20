@@ -1,10 +1,27 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+  margin-top: 4rem !important;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%;
+  margin: 0 auto;
+  gap: 0.825rem;
+  input {
+    background-color: white;
+    height: 2em;
+    border-radius: 0.5rem;
+  }
+  .message-receive {
+    width: 100%;
+  }
+  .json-viewer {
+    gap: 1rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -27,12 +44,11 @@
 .App-link {
   color: #61dafb;
 }
-.result{
- text-align: start;
-  margin: 20px auto;
-  width: 80%;
-
+.result {
+  text-align: start;
+  width: 100%;
   border: 1px solid #000;
+  border-radius: 0.5rem;
 }
 @keyframes App-logo-spin {
   from {
