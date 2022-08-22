@@ -21,7 +21,7 @@ function App() {
     socket.current?.on(stcMessage, (data) => {
       setResult(data);
     });
-    return () => socket?.current.close();
+    return () => socket?.current?.close();
   }, [stcMessage]);
   const handdleSendMessage = () => {
     socket.current.emit(ctsMessage, JSON.parse(payload));
@@ -42,11 +42,20 @@ function App() {
   };
   const handleListen = () => {
     console.log("listening");
-    socket.current.on(stcMessage, (payload) => {
-      console.log(payload);
-      setResult(payload);
+    socket.current.on(stcMessage, (data) => {
+      setResult(data);
     });
   };
+  function tryParseJSONObject(jsonString) {
+    try {
+      var o = JSON.parse(jsonString);
+      if (o && typeof o === "object") {
+        return o;
+      }
+    } catch (e) {
+      return {};
+    }
+  }
   return (
     <>
       <div className="App">
@@ -88,7 +97,7 @@ function App() {
           <div className="emit">
             <h3>Emit</h3>
             <input value={payload} onChange={OnEdit}></input>
-            <ReactJson src={JSON.parse(payload)} />
+            <ReactJson src={tryParseJSONObject(payload)} />
           </div>
           <div className="result">
             <h3>Receive</h3>
