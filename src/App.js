@@ -8,11 +8,12 @@ import { TabContext } from "@mui/lab";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Appbar from "./components/Appbar";
+import JsonViewer from "@textea/json-viewer";
 function App() {
   const [accessToken, setAccessToken] = useState("");
   const [ctsMessage, setctsMessage] = useState("");
   const [stcMessage, setstcMessage] = useState("");
-  const [payload, setPayload] = useState({});
+  const [payload, setPayload] = useState("{}");
   const [tabValue, setTabValue] = useState(1);
   const [result, setResult] = useState({});
   const socket = useRef();
@@ -23,9 +24,7 @@ function App() {
     return () => socket?.current.close();
   }, [stcMessage]);
   const handdleSendMessage = () => {
-    socket.current.emit(ctsMessage, {
-      ...payload,
-    });
+    socket.current.emit(ctsMessage, JSON.parse(payload));
   };
 
   const handleConnect = () => {
@@ -36,52 +35,62 @@ function App() {
     });
   };
   const OnEdit = (e) => {
-    setPayload(e.updated_src);
+    setPayload(e.target.value);
   };
   const handleChangeTab = (e, newValue) => {
     setTabValue(newValue);
   };
+  const handleListen = () => {
+    console.log("listening");
+    socket.current.on(stcMessage, (payload) => {
+      console.log(payload);
+      setResult(payload);
+    });
+  };
   return (
     <>
-      <div className='App'>
-        <div className='socket-connect'>
-          <input
-            placeholder='token'
-            value={accessToken}
-            onChange={(e) => {
-              setAccessToken(e.target.value);
-            }}
-          />
-          <button onClick={handleConnect}>Connect</button>
-          <input
-            placeholder='name message send'
-            value={ctsMessage}
-            onChange={(e) => {
-              setctsMessage(e.target.value);
-            }}
-          />
-          <button onClick={handdleSendMessage}>send</button>
+      <div className="App">
+        <div className="socket-connect">
+          <div>
+            <input
+              placeholder="token"
+              value={accessToken}
+              onChange={(e) => {
+                setAccessToken(e.target.value);
+              }}
+            />
+            <button onClick={handleConnect}>Connect</button>
+          </div>
+          <div>
+            <input
+              className="message-receive"
+              placeholder="name messsage receive"
+              value={stcMessage}
+              onChange={(e) => {
+                setstcMessage(e.target.value);
+              }}
+            />
+            <button onClick={handleListen}>listen</button>
+          </div>
+          <div>
+            <input
+              placeholder="name message send"
+              value={ctsMessage}
+              onChange={(e) => {
+                setctsMessage(e.target.value);
+              }}
+            />
+            <button onClick={handdleSendMessage}>send</button>
+          </div>
         </div>
 
-        <input
-          className='message-receive'
-          placeholder='name messsage receive'
-          value={stcMessage}
-          onChange={(e) => {
-            setstcMessage(e.target.value);
-          }}
-        />
-        <div className='json-viewer'>
-          <div className='result'>
+        <div className="json-viewer">
+          <div className="emit">
             <h3>Emit</h3>
-            <ReactJson
-              src={payload}
-              onEdit={OnEdit}
-              onAdd={OnEdit}
-              onDelete={OnEdit}
-            />
+            <input value={payload} onChange={OnEdit}></input>
+            <ReactJson src={JSON.parse(payload)} />
           </div>
-          <div className='result'>
+          <div className="result">
             <h3>Receive</h3>
             <ReactJson src={result} />
           </div>
